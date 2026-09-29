@@ -323,7 +323,7 @@
     var runBtn = document.getElementById('runBtn');
 
     function updateStatus(msg, cls) {
-        msgs.innerHTML = msg;
+        msgs.inner = msg;
         msgs.className = 'status-text' + (cls ? ' ' + cls : '');
     }
 
@@ -348,8 +348,8 @@
         if (redirected || !isPS5 || !isSupported) return;
         redirected = true;
         
-        updateStatus('🚀 Loading PS4.html exploit target...');
-        window.location.replace('PS4.html');
+        updateStatus('🚀 Loading PS5.html exploit target...');
+        window.location.replace('PS5.html');
     }
 
     var cacheState = 'unknown';
