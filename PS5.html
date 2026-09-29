@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" manifest="cache.appcache">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>شـركة أورجينال أسيـوط -ش الجمهوريـة -بجوار فرع فودافون</title>
+  <style>
+    :root {
+        --bg-overlay: rgba(13, 14, 16, 0.45);
+        --panel-bg: rgba(25, 28, 32, 0.75);
+        --border-glass: rgba(255, 255, 255, 0.12);
+        --accent: #a78bfa;
+        --accent-glow: rgba(167, 139, 250, 0.4);
+        --text-main: #ffffff;
+        --text-sub: #cbd5e1;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+        background-image: 
+            linear-gradient(var(--bg-overlay), var(--bg-overlay)),
+            url("icon0.png");
+        background-size: 100% 100%;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: var(--text-main);
+        min-height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: inherit;
+        filter: blur(2px);
+        z-index: -1;
+    }
+
+    .shell {
+        width: 100%;
+        max-width: 680px;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        z-index: 1;
+    }
+
+    .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--panel-bg);
+        border: 1px solid var(--border-glass);
+        padding: 15px 25px;
+        border-radius: 14px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+    .brand-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .wrap {
+        background: var(--panel-bg);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 30px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .hero {
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #ffffff;
+    }
+
+    .accent {
+        color: var(--accent);
+        text-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .hero-sub {
+        font-size: 0.95rem;
+        color: var(--text-sub);
+    }
+
+    .status-panel {
+        background: rgba(15, 17, 20, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        min-height: 220px;
+    }
+
+    /* إلغاء إخفاء الكونسول وجعله يظهر كبديل أساسي لدائرة التحميل */
+    #spin {
+        display: none !important;
+    }
+
+    #msg {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #f87171;
+        display: none;
+    }
+
+    #state {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-shadow: 0 0 10px var(--accent-glow);
+        width: 100%;
+        text-align: right;
+    }
+
+    #out {
+        display: block !important; /* إظهار الكونسول دائماً مكان الدائرة */
+        white-space: pre-wrap;
+        font-family: Consolas, monospace;
+        font-size: 0.85rem;
+        line-height: 1.45;
+        background: rgba(10, 12, 15, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 15px;
+        width: 100%;
+        min-height: 180px;
+        max-height: 350px;
+        overflow-y: auto;
+        color: var(--text-sub);
+        text-align: left;
+    }
+
+    /* حالات العرض */
+    body.fail #msg { display: block; }
+
+    .foot {
+        text-align: center;
+        font-size: 0.85rem;
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        padding-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+    <header class="topbar">
+        <span class="brand-name">شـركة أورجينال أسيـوط -ش الجمهوريـة -بجوار فرع فودافون</span>
+    </header>
+
+    <main class="wrap" id="wrap">
+       <section class="hero">
+            <h1 class="hero-title">PS5 <span class="accent">Relapse</span></h1>
+            <p class="hero-sub">Firmware 7.00 - 13.60</p>
+       </section>
+
+       <section class="status-panel">
+            <div id="spin"></div>
+            <div id="msg">Restart your console</div>
+            <div id="state"></div>
+            <div id="out">جاري تهيئة النظام وتحميل الثغرة...</div>
+       </section>
+    </main>
+
+    <footer class="foot">
+        <p>© Developed By Ahmed Abdelsalam</p>
+    </footer>
+</div>
+
+<!-- ملفات تشغيل الثغرة الخاصة بـ Relapse -->
+<script src="./src/firmware.js"></script>
+<script src="./src/main.js"></script>
+<script src="./src/rop.js"></script>
+<script src="./src/utils/syscalls.js"></script>
+<script type="module" src="./src/site.js"></script>
+</body>
+</html>
