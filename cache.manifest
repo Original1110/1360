@@ -7,11 +7,11 @@ icon0.png
 src/firmware.js
 src/main.js
 src/rop.js
-src/utils/syscalls.js
 src/site.js
 src/webkit.js
 src/relapse_exploit.js
 src/kexp.js
+src/utils/syscalls.js
 src/utils/mem.js
 src/utils/int64.js
 src/utils/rop_slave.js
