@@ -5,6 +5,7 @@ const PROT_RW = 0x3, PROT_RWX = 0x7;
 const MAP_SHARED = 0x1, MAP_PRIVATE_ANON = 0x1002;
 
 const DEFAULT_KEXP = "kexp_2026_05_25.bin";
+const DEFAULT_ELFLDR = "elfldr-ps5-1360.elf";
 
 const SHELLCODE = {
   size: 18912,
@@ -153,15 +154,14 @@ async function sendElf(name, payload, p, chain) {
 }
 
 export async function loadOptionalPayloads(p, chain, log) {
-log("preparing optional payloads");
+  log("preparing optional payloads");
   const kstuff = await mapElf("kstuff.elf", p, chain);
   const shadowmount = await mapElf("shadowmountplus.elf", p, chain);
   await sendElf("kstuff.elf", kstuff, p, chain);
   log("kstuff.elf sent");
   await new Promise((resolve) => setTimeout(resolve, 3000));
   await sendElf("shadowmountplus.elf", shadowmount, p, chain);
-  log("shadowmountplus.elf sent");
-
+  log("shadowmountplus.elf sent")
 }
 
 function patchShellcode(blob, symbols) {
@@ -294,6 +294,7 @@ export async function runKexp(krw, p, chain, log) {
     throw new Error("kexp: invalid allproc address " + hex(allproc));
   const symbols = resolveSymbols(p);
 
+  const elfldr = await mapElf(DEFAULT_ELFLDR, p, chain);
 
   const blob = await fetchBinary(DEFAULT_KEXP);
   patchShellcode(blob, symbols);
@@ -310,7 +311,8 @@ export async function runKexp(krw, p, chain, log) {
   p.write4(args.add32(0x08), victim.readFd);
   p.write4(args.add32(0x0c), victim.writeFd);
   p.write8(args.add32(0x10), allproc);
-
+  p.write8(args.add32(0x18), elfldr.base);
+  p.write8(args.add32(0x20), elfldr.size);
 
   const result = await spawnAndJoin(entry, args, symbols, p, chain);
   if (result.joinResult !== 0)
