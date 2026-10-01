@@ -4,8 +4,8 @@ const O_NONBLOCK = 0x4;
 const PROT_RW = 0x3, PROT_RWX = 0x7;
 const MAP_SHARED = 0x1, MAP_PRIVATE_ANON = 0x1002;
 
-const DEFAULT_KEXP = "kexp_2026_05_25.bin";
-const DEFAULT_ELFLDR = "elfldr-ps5-1360.elf";
+const DEFAULT_KEXP = "kexp.bin";
+const DEFAULT_ELFLDR = "elfldr.elf";
 
 const SHELLCODE = {
   size: 18912,
