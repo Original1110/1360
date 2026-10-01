@@ -1,7 +1,7 @@
 CACHE MANIFEST
 # Relapse Exploit page resources
+
 CACHE:
-/
 index.html
 icon0.png
 src/firmware.js
@@ -53,5 +53,6 @@ payloads/shadowmountplus.elf
 payloads/etaHEN.elf
 payloads/kexp_2026_05_25.bin
 payloads/elfldr-ps5-1360.elf
+
 NETWORK:
 *
