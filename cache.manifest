@@ -1,7 +1,7 @@
 CACHE MANIFEST
 # Relapse Exploit page resources
 CACHE:
-/
+
 index.html
 icon0.png
 src/firmware.js
