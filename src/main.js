@@ -280,7 +280,6 @@ async function main(userlandRW) {
 
   if (result.payloads) {
     log("kernel exploit complete", "info");
-    log("elfldr is listening on port 9021", "info");
     watchR2(async () => {
       try {
         const { loadOptionalPayloads } = await import("./kexp.js");
