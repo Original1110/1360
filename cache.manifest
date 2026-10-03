@@ -52,6 +52,7 @@ payloads/kstuff.elf
 payloads/shadowmountplus.elf
 payloads/kexp_2026_05_25.bin
 payloads/elfldr-ps5-1360.elf
+payloads/pldmgr.elf
 
 NETWORK:
 *
