@@ -4,8 +4,8 @@ const O_NONBLOCK = 0x4;
 const PROT_RW = 0x3, PROT_RWX = 0x7;
 const MAP_SHARED = 0x1, MAP_PRIVATE_ANON = 0x1002;
 
-const DEFAULT_KEXP = "kexp.bin";
-const DEFAULT_ELFLDR = "elfldr.elf";
+const DEFAULT_KEXP = "kexp_2026_05_25.bin";
+const DEFAULT_ELFLDR = "elfldr-ps5-1360.elf";
 
 const SHELLCODE = {
   size: 18912,
@@ -157,11 +157,17 @@ export async function loadOptionalPayloads(p, chain, log) {
   log("preparing optional payloads");
   const kstuff = await mapElf("kstuff.elf", p, chain);
   const shadowmount = await mapElf("shadowmountplus.elf", p, chain);
+  const etaHEN = await mapElf("etaHEN.elf", p, chain);
+  const pldmgr = await mapElf("pldmgr.elf", p, chain);
   await sendElf("kstuff.elf", kstuff, p, chain);
   log("kstuff.elf sent");
   await new Promise((resolve) => setTimeout(resolve, 3000));
   await sendElf("shadowmountplus.elf", shadowmount, p, chain);
-  log("shadowmountplus.elf sent")
+  log("shadowmountplus.elf sent");
+  await sendElf("etaHEN.elf", etaHEN, p, chain);
+  log("etaHEN.elf sent");
+  await sendElf("pldmgr.elf", pldmgr, p, chain);
+  log("pldmgr.elf sent");
 }
 
 function patchShellcode(blob, symbols) {
