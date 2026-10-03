@@ -1,11 +1,13 @@
 CACHE MANIFEST
-# Relapse Exploit page resources 101
+# Relapse Exploit page resources
 CACHE:
+
 index.html
 icon0.png
 src/firmware.js
 src/main.js
 src/rop.js
+src/utils/syscalls.js
 src/site.js
 src/webkit.js
 src/relapse_exploit.js
@@ -13,7 +15,6 @@ src/kexp.js
 src/utils/mem.js
 src/utils/int64.js
 src/utils/rop_slave.js
-src/utils/syscalls.js
 offsets/7.00.js
 offsets/7.01.js
 offsets/7.20.js
@@ -49,8 +50,9 @@ offsets/13.42.js
 offsets/13.60.js
 payloads/kstuff.elf
 payloads/shadowmountplus.elf
+payloads/etaHEN.elf
+payloads/pldmgr.elf
 payloads/kexp_2026_05_25.bin
 payloads/elfldr-ps5-1360.elf
-payloads/pldmgr.elf
 NETWORK:
 *
