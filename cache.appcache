@@ -1,16 +1,18 @@
 CACHE MANIFEST
-# Relapse Exploit page resources
+# PS5 13.60 cache v2026-10-03
+
 CACHE:
 index.html
+icon0.png
 mmhmm-cats-ps5.gif
 src/firmware.js
 src/main.js
 src/rop.js
-src/utils/syscalls.js
 src/site.js
 src/webkit.js
 src/relapse_exploit.js
 src/kexp.js
+src/utils/syscalls.js
 src/utils/mem.js
 src/utils/int64.js
 src/utils/rop_slave.js
