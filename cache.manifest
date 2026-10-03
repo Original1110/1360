@@ -1,9 +1,9 @@
 CACHE MANIFEST
 # Relapse Exploit page resources
 CACHE:
-
+/
 index.html
-icon0.png
+mmhmm-cats-ps5.gif
 src/firmware.js
 src/main.js
 src/rop.js
@@ -50,7 +50,9 @@ offsets/13.42.js
 offsets/13.60.js
 payloads/kstuff.elf
 payloads/shadowmountplus.elf
-payloads/kexp.bin
-payloads/elfldr.elf
+payloads/etaHEN.elf
+payloads/pldmgr.elf
+payloads/kexp_2026_05_25.bin
+payloads/elfldr-ps5-1360.elf
 NETWORK:
 *
