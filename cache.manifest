@@ -1,12 +1,11 @@
 CACHE MANIFEST
 # Relapse Exploit page resources 101
-
+CACHE:
 index.html
 icon0.png
 src/firmware.js
 src/main.js
 src/rop.js
-src/utils/syscalls.js
 src/site.js
 src/webkit.js
 src/relapse_exploit.js
@@ -14,6 +13,7 @@ src/kexp.js
 src/utils/mem.js
 src/utils/int64.js
 src/utils/rop_slave.js
+src/utils/syscalls.js
 offsets/7.00.js
 offsets/7.01.js
 offsets/7.20.js
