@@ -375,345 +375,155 @@
 
 <script>
 (() => {
+    const status = document.getElementById("cache-status");
+    const label = document.getElementById("cache-label");
+    const count = document.getElementById("cache-count");
+    const progress = document.getElementById("cache-progress");
+    const consoleBox = document.getElementById("console");
 
-    const status =
-        document.getElementById("cache-status");
-
-    const label =
-        document.getElementById("cache-label");
-
-    const count =
-        document.getElementById("cache-count");
-
-    const progress =
-        document.getElementById("cache-progress");
-
-    const consoleBox =
-        document.getElementById("console");
-
+    const cache = window.applicationCache;
 
     function log(message) {
-
-        const line =
-            document.createElement("div");
-
-        const time =
-            new Date().toLocaleTimeString();
-
-        line.textContent =
-            `[${time}] ${message}`;
-
+        const line = document.createElement("div");
+        line.textContent = message;
         consoleBox.appendChild(line);
-
-        consoleBox.scrollTop =
-            consoleBox.scrollHeight;
+        consoleBox.scrollTop = consoleBox.scrollHeight;
     }
 
-
-    function setState(text, state) {
-
+    function state(text, type) {
         label.textContent = text;
-
-        status.dataset.state = state;
-
+        status.dataset.state = type;
     }
 
-
-    function setProgress(loaded, total) {
-
+    function progressValue(loaded, total) {
         if (total > 0) {
-
-            progress.value =
-                Math.min(1, loaded / total);
-
-            count.textContent =
-                `${loaded} / ${total} resources`;
-
+            progress.value = Math.min(1, loaded / total);
+            count.textContent = `${loaded} / ${total} resources`;
         } else {
-
-            progress.value = 0;
-
-            count.textContent =
-                `${loaded} resources`;
-
+            count.textContent = `${loaded} resources`;
         }
-
     }
 
-
-    /*
-     * Service Worker
-     */
-
-    if (!("serviceWorker" in navigator)) {
-
-        setState(
-            "Service Worker is not supported",
-            "error"
-        );
-
+    if (!cache) {
+        state("Application Cache unavailable", "error");
         count.textContent = "Unsupported";
-
-        log(
-            "Service Worker is not supported by this browser."
-        );
-
+        log("window.applicationCache is unavailable.");
         return;
-
     }
 
-
-    window.addEventListener(
-        "load",
-        async () => {
-
-            try {
-
-                log(
-                    "Registering Service Worker..."
-                );
-
-                const registration =
-                    await navigator.serviceWorker.register(
-                        "./sw.js",
-                        {
-                            scope: "./"
-                        }
-                    );
-
-
-                log(
-                    "Service Worker registered successfully."
-                );
-
-
-                if (registration.installing) {
-
-                    setState(
-                        "Downloading cache...",
-                        "downloading"
-                    );
-
-                    count.textContent =
-                        "Installing";
-
-                    progress.value = 0;
-
-                    log(
-                        "Cache installation started."
-                    );
-
-                }
-
-
-                if (registration.waiting) {
-
-                    setState(
-                        "Cache update ready",
-                        "success"
-                    );
-
-                    progress.value = 1;
-
-                    count.textContent =
-                        "Updated";
-
-                    log(
-                        "A new cache is waiting."
-                    );
-
-                }
-
-
-                if (registration.active) {
-
-                    setState(
-                        "Cache is ready",
-                        "success"
-                    );
-
-                    progress.value = 1;
-
-                    count.textContent =
-                        "Ready";
-
-                    log(
-                        "Service Worker is active."
-                    );
-
-                }
-
-
-                registration.addEventListener(
-                    "updatefound",
-                    () => {
-
-                        const worker =
-                            registration.installing;
-
-                        if (!worker) {
-                            return;
-                        }
-
-
-                        setState(
-                            "Downloading cache...",
-                            "downloading"
-                        );
-
-                        count.textContent =
-                            "Installing";
-
-                        progress.value = 0;
-
-
-                        worker.addEventListener(
-                            "statechange",
-                            () => {
-
-                                log(
-                                    "Service Worker state: " +
-                                    worker.state
-                                );
-
-
-                                if (
-                                    worker.state ===
-                                    "installed"
-                                ) {
-
-                                    if (
-                                        navigator
-                                            .serviceWorker
-                                            .controller
-                                    ) {
-
-                                        setState(
-                                            "Cache updated",
-                                            "success"
-                                        );
-
-                                        count.textContent =
-                                            "Updated";
-
-                                        progress.value =
-                                            1;
-
-                                        log(
-                                            "New cache installed."
-                                        );
-
-                                    } else {
-
-                                        setState(
-                                            "Cache downloaded successfully",
-                                            "success"
-                                        );
-
-                                        count.textContent =
-                                            "Ready";
-
-                                        progress.value =
-                                            1;
-
-                                        log(
-                                            "Cache downloaded successfully."
-                                        );
-
-                                    }
-
-                                }
-
-
-                                if (
-                                    worker.state ===
-                                    "redundant"
-                                ) {
-
-                                    setState(
-                                        "Cache installation failed",
-                                        "error"
-                                    );
-
-                                    count.textContent =
-                                        "Failed";
-
-                                    progress.value = 0;
-
-                                    log(
-                                        "Service Worker became redundant."
-                                    );
-
-                                }
-
-                            }
-                        );
-
-                    }
-                );
-
-
-            } catch (error) {
-
-                setState(
-                    "Cache download failed",
-                    "error"
-                );
-
-                count.textContent =
-                    "Failed";
-
-                progress.value = 0;
-
-
-                log(
-                    "Service Worker error: " +
-                    error.message
-                );
-
-                console.error(
-                    "Service Worker error:",
-                    error
-                );
-
-            }
-
+    log("Application Cache detected.");
+
+    cache.addEventListener("checking", () => {
+        state("Checking cache...", "checking");
+        count.textContent = "Checking";
+        log("Checking cache.appcache...");
+    });
+
+    cache.addEventListener("downloading", () => {
+        state("Downloading cache...", "downloading");
+        progress.value = 0;
+        count.textContent = "0 resources";
+        log("Cache download started.");
+    });
+
+    cache.addEventListener("progress", event => {
+        progressValue(
+            event.loaded || 0,
+            event.total || 0
+        );
+
+        state("Downloading cache...", "downloading");
+    });
+
+    cache.addEventListener("cached", () => {
+        progress.value = 1;
+        count.textContent = "Ready";
+        state("Cache downloaded successfully", "success");
+        log("Cache downloaded successfully.");
+    });
+
+    cache.addEventListener("noupdate", () => {
+        progress.value = 1;
+        count.textContent = "Up to date";
+        state("Cache is ready", "success");
+        log("Cache is already up to date.");
+    });
+
+    cache.addEventListener("updateready", () => {
+        progress.value = 1;
+        count.textContent = "Updated";
+        state("Cache updated", "success");
+
+        log("New cache is ready.");
+
+        try {
+            cache.swapCache();
+            log("Cache swapped successfully.");
+        } catch (e) {
+            log("swapCache skipped.");
         }
-    );
 
+        setTimeout(() => {
+            location.reload();
+        }, 500);
+    });
 
-    /*
-     * Online / Offline
-     */
+    cache.addEventListener("error", event => {
+        state("Cache download failed", "error");
+        count.textContent = "Failed";
+        progress.value = 0;
 
-    window.addEventListener(
-        "online",
-        () => {
+        log("CACHE ERROR");
+        console.error("ApplicationCache error:", event);
+    });
 
-            log(
-                "Internet connection restored."
-            );
+    cache.addEventListener("obsolete", () => {
+        state("Cache manifest unavailable", "error");
+        count.textContent = "Obsolete";
+        progress.value = 0;
 
-        }
-    );
+        log("cache.appcache is obsolete or unavailable.");
+    });
 
+    cache.addEventListener("noupdate", () => {
+        progress.value = 1;
+        count.textContent = "Up to date";
+        state("Cache is ready", "success");
+    });
 
-    window.addEventListener(
-        "offline",
-        () => {
+    switch (cache.status) {
 
-            log(
-                "Offline mode."
-            );
+        case cache.UNCACHED:
+            state("Waiting for cache...", "checking");
+            count.textContent = "Waiting";
+            break;
 
-            setState(
-                "Offline — using cache",
-                "success"
-            );
+        case cache.IDLE:
+            state("Cache is ready", "success");
+            progress.value = 1;
+            count.textContent = "Ready";
+            break;
 
-        }
-    );
+        case cache.CHECKING:
+            state("Checking cache...", "checking");
+            count.textContent = "Checking";
+            break;
 
+        case cache.DOWNLOADING:
+            state("Downloading cache...", "downloading");
+            break;
+
+        case cache.UPDATEREADY:
+            state("Cache update ready", "success");
+            progress.value = 1;
+            count.textContent = "Updated";
+            break;
+
+        case cache.OBSOLETE:
+            state("Cache manifest unavailable", "error");
+            count.textContent = "Obsolete";
+            break;
+    }
 
 })();
 </script>
