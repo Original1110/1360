@@ -214,64 +214,121 @@
 </div>
 
 <script>
-    (() => {
-        const status = document.getElementById("cache-status");
-        const label = document.getElementById("cache-label");
-        const count = document.getElementById("cache-count");
-        const progress = document.getElementById("cache-progress");
-        const cache = window.applicationCache;
+(() => {
+    const status = document.getElementById("cache-status");
+    const label = document.getElementById("cache-label");
+    const count = document.getElementById("cache-count");
+    const progress = document.getElementById("cache-progress");
+    const cache = window.applicationCache;
 
-        function showState(text, state) {
-            label.textContent = text;
-            status.dataset.state = state;
-        }
+    if (!cache) {
+        label.textContent = "Offline cache is not supported";
+        status.dataset.state = "error";
+        return;
+    }
 
-        if (!cache) {
-            showState("Offline cache is not supported", "error");
+    function showState(text, state) {
+        label.textContent = text;
+        status.dataset.state = state;
+    }
+
+    function showProgress(loaded, total) {
+        if (total > 0) {
+            progress.value = Math.min(1, loaded / total);
+            count.textContent = `${loaded} / ${total} resources`;
         } else {
-            cache.addEventListener("checking", () => showState("Checking cache...", "checking"));
-            cache.addEventListener("downloading", () => {
-                count.textContent = "0 / ? resources";
-                progress.value = 0;
-                showState("Downloading cache...", "downloading");
-            });
-            cache.addEventListener("progress", (event) => {
-                const total = event.total || 0;
-                count.textContent = `${event.loaded} / ${total || "?"} resources`;
-                if (total) progress.value = event.loaded / total;
-                showState("Downloading cache...", "downloading");
-            });
-            cache.addEventListener("cached", () => {
-                progress.value = 1;
-                showState("Cache downloaded successfully", "success");
-                if (count.textContent === "Waiting") count.textContent = "Ready";
-            });
-            cache.addEventListener("noupdate", () => {
-                progress.value = 1;
-                count.textContent = "Up to date";
-                showState("Cache is ready", "success");
-            });
-            cache.addEventListener("updateready", () => {
-                progress.value = 1;
-                showState("Cache update downloaded successfully", "success");
-            });
-            cache.addEventListener("error", () => showState("Cache download failed", "error"));
-            cache.addEventListener("obsolete", () => showState("Cache manifest is unavailable", "error"));
-
-            if (cache.status === cache.IDLE) {
-                progress.value = 1;
-                count.textContent = "Ready";
-                showState("Cache is ready", "success");
-            } else if (cache.status === cache.UPDATEREADY) {
-                progress.value = 1;
-                showState("Cache update downloaded successfully", "success");
-            } else if (cache.status === cache.OBSOLETE) {
-                showState("Cache manifest is unavailable", "error");
-            } else if (cache.status === cache.DOWNLOADING) {
-                showState("Downloading cache...", "downloading");
-            }
+            count.textContent = `${loaded} resources`;
         }
-    })();
+    }
+
+    cache.addEventListener("checking", () => {
+        showState("Checking cache...", "checking");
+        count.textContent = "Checking";
+    });
+
+    cache.addEventListener("downloading", () => {
+        progress.value = 0;
+        count.textContent = "0 resources";
+        showState("Downloading cache...", "downloading");
+    });
+
+    cache.addEventListener("progress", (event) => {
+        showProgress(event.loaded || 0, event.total || 0);
+        showState("Downloading cache...", "downloading");
+    });
+
+    cache.addEventListener("cached", () => {
+        progress.value = 1;
+        count.textContent = "Ready";
+        showState("Cache downloaded successfully", "success");
+    });
+
+    cache.addEventListener("noupdate", () => {
+        progress.value = 1;
+        count.textContent = "Up to date";
+        showState("Cache is ready", "success");
+    });
+
+    cache.addEventListener("updateready", () => {
+        try {
+            cache.swapCache();
+        } catch (e) {
+            // Older WebKit may already have swapped the cache.
+        }
+
+        progress.value = 1;
+        count.textContent = "Updated";
+        showState("Cache updated — reloading...", "success");
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 300);
+    });
+
+    cache.addEventListener("error", () => {
+        showState("Cache download failed", "error");
+        count.textContent = "Failed";
+        progress.value = 0;
+    });
+
+    cache.addEventListener("obsolete", () => {
+        showState("Cache manifest is unavailable", "error");
+        count.textContent = "Obsolete";
+    });
+
+    // Initial status check.
+    switch (cache.status) {
+        case cache.IDLE:
+            progress.value = 1;
+            count.textContent = "Ready";
+            showState("Cache is ready", "success");
+            break;
+
+        case cache.UPDATEREADY:
+            progress.value = 1;
+            count.textContent = "Updated";
+            showState("Cache update ready", "success");
+            break;
+
+        case cache.DOWNLOADING:
+            showState("Downloading cache...", "downloading");
+            break;
+
+        case cache.CHECKING:
+            showState("Checking cache...", "checking");
+            break;
+
+        case cache.OBSOLETE:
+            showState("Cache manifest is unavailable", "error");
+            break;
+
+        case cache.UNCACHED:
+        default:
+            showState("Waiting for cache...", "checking");
+            count.textContent = "Waiting";
+            break;
+    }
+})();
 </script>
 <script src="./src/firmware.js"></script>
 <script src="./src/main.js"></script>
